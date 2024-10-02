@@ -57,12 +57,12 @@ def leitura_banco_de_dados(connection_string):
         # Definindo a consulta SQL
         query = """
         SELECT
-            c.F13577 AS criado_em,
+            c.F13577 AS data_criacao,
             d.F00689 AS nome,
-            a.F31768 AS operacao,
-            f.F00091 AS devedor,
-            f.F27086 AS documento,
-            g.F26297 AS carteira,
+            a.F31768 AS Operação,
+            f.F00091 AS Devedor,
+            f.F27086 AS Documento,
+            g.F26297 AS Carteira,
             CASE
                 WHEN a.F16778 = 1 THEN 'Liquidado'
                 WHEN a.F16778 = 2 THEN 'Em aberto'
@@ -93,8 +93,19 @@ def leitura_banco_de_dados(connection_string):
         # Buscando os resultados
         rows = cursor.fetchall()
 
+        # Se não houver dados, retorna um DataFrame vazio
+        if not rows:
+            print("Nenhum dado retornado pela consulta.")
+            return df  # Retorna um DataFrame vazio
+        
         # Criando um DataFrame a partir dos resultados
-        df = pd.DataFrame.from_records(rows, columns=['criado_em', 'nome', 'operacao', 'devedor', 'documento', 'carteira', 'situacao', 'processo'])
+        df = pd.DataFrame.from_records(rows, columns=['data_criacao', 'nome', 'Operação', 'Devedor', 'Documento', 'Carteira', 'situacao', 'processo'])
+        
+        # Verificando se a coluna 'data_criacao' existe antes de renomear
+        if 'data_criacao' in df.columns:
+            df.rename(columns={'data_criacao': 'Data Criação'}, inplace=True)
+        else:
+            print("A coluna 'data_criacao' não foi encontrada.")
 
     except pyodbc.Error as e:
         print("Erro na conexão:", e)
@@ -107,12 +118,13 @@ def leitura_banco_de_dados(connection_string):
     
     return df
 
+
 def tratamento_df_por_gestor(df, carteiras_por_gestor):
     # Filtrar e agrupar o DataFrame por carteiras de cada gestor
     arquivos_gerados = {}
 
     for gestor, carteiras in carteiras_por_gestor.items():
-        df_gestor = df[df['carteira'].isin(carteiras)]
+        df_gestor = df[df['Carteira'].isin(carteiras)]
         
         if not df_gestor.empty:
             # Nome do arquivo Excel para o gestor
@@ -132,7 +144,7 @@ def enviar_email(arquivos_gerados, email_gestores, df):
         destinatario = email_gestores.get(gestor)
         if destinatario:
             # Filtra o DataFrame para o gestor atual
-            df_gestor = df[df['carteira'].isin(carteiras_por_gestor[gestor])]
+            df_gestor = df[df['Carteira'].isin(carteiras_por_gestor[gestor])]
             
             if not df_gestor.empty:
                 # Converter o DataFrame filtrado (do gestor) para HTML
