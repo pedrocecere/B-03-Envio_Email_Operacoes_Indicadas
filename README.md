@@ -2,15 +2,21 @@
 
 ## Descrição
 
-Este projeto Python foi desenvolvido para automatizar o processo de extração de dados de carteiras de operações de um banco de dados SQL Server, gerar relatórios filtrados para cada gestor e enviá-los via e-mail. A solução usa integração com o Microsoft Outlook para enviar os e-mails e salvar relatórios personalizados em formato Excel para cada responsável pelas carteiras.
+Este projeto em Python foi desenvolvido para automatizar o processo de envio diário de relatórios de operações cadastradas no módulo de Cobrança. Após o cadastramento das operações no sistema, o código é executado para extrair as operações inseridas no dia atual. O relatório gerado é segmentado automaticamente por tipo de carteira, organizando as informações de acordo com as responsabilidades de cada gestor.
+
+Em seguida, o relatório é enviado por e-mail para os gestores responsáveis e colaboradores interessados, garantindo uma comunicação eficiente e precisa sobre as operações registradas em suas respectivas carteiras.
+
 
 ## Problema de Negócio
 
-O objetivo deste código é auxiliar na distribuição automática de relatórios de acompanhamento de carteiras de casos gerenciadas por diferentes gestores dentro de uma empresa de advocacia. Ao invés de gerar manualmente relatórios diários e enviá-los para cada gestor, o código automatiza a geração e envio de relatórios detalhados, baseados em carteiras específicas, com dados atualizados diretamente do banco de dados.
+O setor de cadastramento de indicações enfrenta diariamente uma carga de tarefas repetitivas e manuais, como o envio de relatórios com as indicações cadastradas no dia. Após o cadastramento dos casos indicados pelo Banco Santander, os colaboradores precisam identificar as operações inseridas, dividir manualmente esses registros por carteiras e enviar relatórios individuais para os gestores responsáveis por cada carteira, além de outros colaboradores envolvidos no fluxo. Esse processo consome tempo, é propenso a erros humanos e reduz a produtividade da equipe.
 
-### Aplicações
-- **Geração automatizada de relatórios diários**: Gera relatórios personalizados com base nas carteiras atribuídas a cada gestor.
-- **Envio de relatórios via e-mail**: Cada gestor recebe um e-mail com seu relatório de carteiras, incluindo um anexo Excel e uma tabela HTML com os dados no corpo do e-mail.
+A automação desenvolvida busca eliminar esse gargalo, otimizando o fluxo de trabalho do setor de indicações, automatizando a geração, segmentação e envio dos relatórios diários, permitindo que os colaboradores foquem em atividades de maior valor agregado.
+
+
+### Tecnologias e Ferramentas utilizadas
+- **SQL**: Linguagem utilizadas dentro da biblioteca pyodbc para extrações de dados tabulares do banco de dados SQL Server - Ramaprod.
+- **Python**: Todo código é feito em linguagem python, desde a biblioteca para extração dos dados, carregamento e transformação, divisão da base e envio dos relatórios por e-mail.
 - **Automação de processos**: Reduz o esforço manual de extração e distribuição de dados, economizando tempo e evitando erros humanos.
 
 ## Lógica do Código
