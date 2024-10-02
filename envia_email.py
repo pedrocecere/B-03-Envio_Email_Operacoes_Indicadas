@@ -25,21 +25,21 @@ assunto = 'Relatório de casos cadastrados'
 # Dicionário de e-mails dos gestores e as carteiras que eles gerenciam
 email_gestores = {
     "Pedro Vieira Cecere": "pedro.cecere@ramaadvogados.com.br",
-    "Rafael Rama e Silva": "pedro.cecere@ramaadvogados.com.br",
-    "Daniella": "pedro.cecere@ramaadvogados.com.br",
+    "Rafael Rama": "pedro.cecere@ramaadvogados.com.br",
+    "Daniela Silveira": "pedro.cecere@ramaadvogados.com.br",
     "Sirlei Rama": "pedro.cecere@ramaadvogados.com.br",
-    "Ellen Stella Rama": "pedro.cecere@ramaadvogados.com.br",
-    "Rodrigo Rama e Silva" : "pedro.cecere@ramaadvogados.com.br"
+    "Ellen Stella": "pedro.cecere@ramaadvogados.com.br",
+    "Rodrigo Rama" : "pedro.cecere@ramaadvogados.com.br"
 }
 
 # Dicionário que mapeia carteiras para gestores
 carteiras_por_gestor = {
     "Pedro Vieira Cecere": ["Massificado PF", "Massificado PJ", "Autos", "Alto ticket", "Núcleo Massificado"],
-    "Rafael Rama e Silva": ["Credito Imobiliario"],
-    "Daniella": ["Massificado PF", "Massificado PJ", "Autos", "Alto ticket", "Núcleo Massificado"],
+    "Rafael Rama": ["Credito Imobiliario", "Alienação Fiduciária"],
+    "Daniela Silveira": ["Massificado PF", "Massificado PJ", "Autos", "Alto ticket", "Núcleo Massificado"],
     "Sirlei Rama": ["Massificado PF", "Massificado PJ", "Autos", "Alto ticket", "Núcleo Massificado"],
-    "Helen Rama": ["Recuperação Judicial", "Judicial Especializado"],
-    "Rodrigo Rama e Silva" : ["Massificado PF", "Massificado PJ", "Autos", "Alto ticket", "Núcleo Massificado"]
+    "Ellen Stella": ["Recuperação Judicial", "Judicial Especializado", "Agro"],
+    "Rodrigo Rama" : ["Massificado PF", "Massificado PJ", "Autos", "Alto ticket", "Núcleo Massificado"]
 }
 
 def leitura_banco_de_dados(connection_string):
@@ -116,28 +116,51 @@ def tratamento_df_por_gestor(df, carteiras_por_gestor):
         
         if not df_gestor.empty:
             # Nome do arquivo Excel para o gestor
-            nome_arquivo = 'Operações cadastradas.xlsx'
+            nome_arquivo = f'{gestor.replace(" ", "_")}_carteiras.xlsx'
             df_gestor.to_excel(nome_arquivo, index=False)
             arquivos_gerados[gestor] = nome_arquivo
             print(f'Arquivo {nome_arquivo} criado para o gestor {gestor}')
 
     return arquivos_gerados
 
-def enviar_email(arquivos_gerados, email_gestores):
+def enviar_email(arquivos_gerados, email_gestores, df):
+    # Caminho para a imagem da assinatura
+    imagem_assinatura = r'X:\NOVA MARCA RAMA\Assinaturas de E-mail\PEDRO_VIEIRA_CECERE.jpg'
+
     # Enviar e-mails com os arquivos Excel gerados
     for gestor, arquivo in arquivos_gerados.items():
         destinatario = email_gestores.get(gestor)
         if destinatario:
-            mail = outlook.CreateItem(0)
-            mail.Subject = assunto
-            mail.To = destinatario
-            mail.Body = f"Olá {gestor},\n\nSegue em anexo o relatório das carteiras sob sua responsabilidade.\n\nAtenciosamente,\n\nPedro Cecere - Analista de Dados"
-            mail.Attachments.Add(os.path.abspath(arquivo))
-            mail.Send()
-            print(f'E-mail enviado para {destinatario} com o arquivo {arquivo}')
+            # Filtra o DataFrame para o gestor atual
+            df_gestor = df[df['carteira'].isin(carteiras_por_gestor[gestor])]
+            
+            if not df_gestor.empty:
+                # Converter o DataFrame filtrado (do gestor) para HTML
+                df_html = df_gestor.to_html(index=False, escape=False)
+
+                mail = outlook.CreateItem(0)
+                mail.Subject = assunto
+                mail.To = destinatario
+                mail.HTMLBody = f"""
+                <p>Olá {gestor},</p>
+                <p>Segue abaixo o relatório das carteiras sob sua responsabilidade:</p>
+                {df_html}  <!-- Aqui é o HTML gerado a partir do DataFrame filtrado -->
+                <p>Atenciosamente,</p>
+                <p><img src="cid:assinatura" alt='Assinatura Digital' width="500" height="130 "/></p>
+                """
+                # Anexando a imagem da assinatura com o Content-ID
+                attachment = mail.Attachments.Add(imagem_assinatura)
+                attachment.PropertyAccessor.SetProperty("http://schemas.microsoft.com/mapi/proptag/0x3712001F", "assinatura")
+
+                # Anexando o arquivo Excel
+                mail.Attachments.Add(os.path.abspath(arquivo))
+                
+                # Enviar o e-mail
+                mail.Send()
+                print(f'E-mail enviado para {destinatario} com o arquivo {arquivo}')
+
 
 # Executando as funções
 df = leitura_banco_de_dados(connection_string)
 arquivos_gerados = tratamento_df_por_gestor(df, carteiras_por_gestor)
-enviar_email(arquivos_gerados, email_gestores)
-
+enviar_email(arquivos_gerados, email_gestores, df)  # Passando o df como argumento
