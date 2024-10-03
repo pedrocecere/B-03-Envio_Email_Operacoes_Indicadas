@@ -17,7 +17,6 @@ A automação desenvolvida busca eliminar esse gargalo, otimizando o fluxo de tr
 ## Tecnologias e Ferramentas utilizadas
 - **SQL**: Linguagem utilizadas dentro da biblioteca pyodbc para extrações de dados tabulares do banco de dados SQL Server - Ramaprod.
 - **Python**: Todo código é feito em linguagem python, desde a biblioteca para extração dos dados, carregamento e transformação, divisão da base e envio dos relatórios por e-mail.
-- **Automação de processos**: Reduz o esforço manual de extração e distribuição de dados, economizando tempo e evitando erros humanos.
 
 ## Lógica do Código
 
@@ -48,10 +47,6 @@ Para rodar o código, você precisará:
   - `pyodbc`
   - `python-dotenv`
   - `win32com.client` (parte do pacote `pywin32`)
-  
-Além disso, você deve ter:
-- Um banco de dados SQL Server com os dados de operações e carteiras.
-- Microsoft Outlook instalado e configurado na máquina que executará o código.
 
 ## Como Usar
 
