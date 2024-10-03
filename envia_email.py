@@ -25,21 +25,21 @@ assunto = 'Relatório de casos cadastrados'
 # Dicionário de e-mails dos gestores e as carteiras que eles gerenciam
 email_gestores = {
     "Pedro Vieira Cecere": "pedro.cecere@ramaadvogados.com.br",
-    "Rafael Rama": "pedro.cecere@ramaadvogados.com.br",
-    "Daniela Silveira": "pedro.cecere@ramaadvogados.com.br",
-    "Sirlei Rama": "pedro.cecere@ramaadvogados.com.br",
-    "Ellen Stella": "pedro.cecere@ramaadvogados.com.br",
-    "Rodrigo Rama" : "pedro.cecere@ramaadvogados.com.br"
+    "Dr. Rafael": "pedro.cecere@ramaadvogados.com.br",
+    "Dra. Daniela": "pedro.cecere@ramaadvogados.com.br",
+    "Dra. Sirlei": "pedro.cecere@ramaadvogados.com.br",
+    "Dra. Ellen": "pedro.cecere@ramaadvogados.com.br",
+    "Dr. Rodrigo" : "pedro.cecere@ramaadvogados.com.br"
 }
 
 # Dicionário que mapeia carteiras para gestores
 carteiras_por_gestor = {
     "Pedro Vieira Cecere": ["Massificado PF", "Massificado PJ", "Autos", "Alto ticket", "Núcleo Massificado"],
-    "Rafael Rama": ["Credito Imobiliario", "Alienação Fiduciária"],
-    "Daniela Silveira": ["Massificado PF", "Massificado PJ", "Autos", "Alto ticket", "Núcleo Massificado"],
-    "Sirlei Rama": ["Massificado PF", "Massificado PJ", "Autos", "Alto ticket", "Núcleo Massificado"],
-    "Ellen Stella": ["Recuperação Judicial", "Judicial Especializado", "Agro"],
-    "Rodrigo Rama" : ["Massificado PF", "Massificado PJ", "Autos", "Alto ticket", "Núcleo Massificado"]
+    "Dr. Rafael": ["Credito Imobiliario", "Alienação Fiduciária"],
+    "Dra. Daniela": ["Massificado PF", "Massificado PJ", "Autos", "Alto ticket", "Núcleo Massificado"],
+    "Dra. Sirlei": ["Massificado PF", "Massificado PJ", "Autos", "Alto ticket", "Núcleo Massificado"],
+    "Dra. Ellen": ["Recuperação Judicial", "Judicial Especializado", "Agro"],
+    "Dr. Rodrigo" : ["Massificado PF", "Massificado PJ", "Autos", "Alto ticket", "Núcleo Massificado"]
 }
 
 def leitura_banco_de_dados(connection_string):
@@ -58,22 +58,10 @@ def leitura_banco_de_dados(connection_string):
         query = """
         SELECT
             c.F13577 AS data_criacao,
-            d.F00689 AS nome,
             a.F31768 AS Operação,
             f.F00091 AS Devedor,
             f.F27086 AS Documento,
-            g.F26297 AS Carteira,
-            CASE
-                WHEN a.F16778 = 1 THEN 'Liquidado'
-                WHEN a.F16778 = 2 THEN 'Em aberto'
-                WHEN a.F16778 = 3 THEN 'Com pendência'
-                WHEN a.F16778 = 4 THEN 'Em negociação'
-                WHEN a.F16778 = 5 THEN 'Negociado'
-                WHEN a.F16778 = 6 THEN 'Liquidado via negociação'
-                WHEN a.F16778 = 7 THEN 'Devolvido para o cliente'
-                ELSE 'Sem status'
-            END AS situacao,
-            c.F13661 AS processo
+            g.F26297 AS Carteira
         FROM ramaprod.dbo.T01167 AS a
         LEFT JOIN ramaprod.dbo.T00041 AS b ON a.F35050 = b.ID
         LEFT JOIN ramaprod.dbo.T01166 AS c ON a.F13700 = c.ID
@@ -99,7 +87,7 @@ def leitura_banco_de_dados(connection_string):
             return df  # Retorna um DataFrame vazio
         
         # Criando um DataFrame a partir dos resultados
-        df = pd.DataFrame.from_records(rows, columns=['data_criacao', 'nome', 'Operação', 'Devedor', 'Documento', 'Carteira', 'situacao', 'processo'])
+        df = pd.DataFrame.from_records(rows, columns=['data_criacao', 'Operação', 'Devedor', 'Documento', 'Carteira'])
         
         # Verificando se a coluna 'data_criacao' existe antes de renomear
         if 'data_criacao' in df.columns:
