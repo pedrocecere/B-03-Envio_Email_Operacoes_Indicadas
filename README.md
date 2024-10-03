@@ -14,7 +14,7 @@ O setor de cadastramento de indicações enfrenta diariamente uma carga de taref
 A automação desenvolvida busca eliminar esse gargalo, otimizando o fluxo de trabalho do setor de indicações, automatizando a geração, segmentação e envio dos relatórios diários, permitindo que os colaboradores foquem em atividades de maior valor agregado.
 
 
-### Tecnologias e Ferramentas utilizadas
+## Tecnologias e Ferramentas utilizadas
 - **SQL**: Linguagem utilizadas dentro da biblioteca pyodbc para extrações de dados tabulares do banco de dados SQL Server - Ramaprod.
 - **Python**: Todo código é feito em linguagem python, desde a biblioteca para extração dos dados, carregamento e transformação, divisão da base e envio dos relatórios por e-mail.
 - **Automação de processos**: Reduz o esforço manual de extração e distribuição de dados, economizando tempo e evitando erros humanos.
